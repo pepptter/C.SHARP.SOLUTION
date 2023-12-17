@@ -94,7 +94,7 @@ internal class MainMenuService
         {
             Console.Write("ENTER PERSONS EMAIL ADDRESS: ");
             bool result = _personService.RemovePersonByEmail(Console.ReadLine()!);
-            if(result == true)
+            if (result == true)
             {
                 Console.WriteLine("PERSON SUCCESSFULLY REMOVED");
                 TryAgainPrompt.TryAgain("REMOVE ANOTHER PERSON", AddPersonMenu);
@@ -104,18 +104,14 @@ internal class MainMenuService
                 Console.WriteLine("SOMETHING WENT WRONG OR EMAIL NOT FOUND, CHECK ERROR");
                 TryAgainPrompt.TryAgain("TRY AGAIN", AddPersonMenu);
             }
-            
-
         }
         else
         {
+            Console.Clear();
             Console.WriteLine("DO YOU WANT TO SHOW THE FULL ADDRESSBOOK TO FIND OUT THE EMAIL? Y/N: ");
-            Console.ReadKey();
             string option2 = Console.ReadLine()!.ToUpper();
             if (option2 == "Y")
-            {
-                ShowFullAddressBook();
-            }
+                ShowFullAddressBook();            
             else
                 ShowMainMenu();
         }
@@ -132,7 +128,7 @@ internal class MainMenuService
             Console.Write("ENTER PERSONS EMAIL ADDRESS: ");
             var searchEmail = Console.ReadLine();
             var fullPerson = _personService.GetPersonByEmail(searchEmail!);
-            if(fullPerson != null)
+            if (fullPerson != null)
             {
                 Console.WriteLine($"FULL INFORMATION OF THE PERSON WITH THE EMAIL ADDRESS: {fullPerson.Email}");
                 Console.WriteLine($"NAME: {fullPerson.FirstName} {fullPerson.LastName}");
@@ -147,6 +143,15 @@ internal class MainMenuService
                 Console.WriteLine("SOMETHING WENT WRONG OR EMAIL NOT FOUND, CHECK ERROR");
                 TryAgainPrompt.TryAgain("TRY AGAIN", ShowContactByEmail);
             }
+        }
+        else
+        {
+            Console.WriteLine("DO YOU WANT TO SHOW THE FULL ADDRESSBOOK TO FIND OUT THE EMAIL? Y/N: ");
+            string option2 = Console.ReadLine()!.ToUpper();
+            if (option2 == "Y")
+                ShowFullAddressBook();
+            else
+                ShowMainMenu();
         }
     }
     public static void ShowFullAddressBook()
