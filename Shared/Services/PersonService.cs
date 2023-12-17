@@ -54,4 +54,23 @@ public class PersonService : IPersonService
         catch (Exception ex) { Debug.WriteLine("PersonService - GetPersonsFromList" + ex.Message); }
         return null!;
     }
+
+    public bool RemovePersonByEmail(string email)
+    {
+        try
+        {
+            GetPersonsFromList();
+            var person = _persons.FirstOrDefault(x => x.Email == email);
+            if (person != null)
+            {
+                _persons.Remove(person);
+            }
+            return true;
+
+        }
+        catch (Exception ex) { Debug.WriteLine("PersonService - RemovePersonByEmail" + ex.Message); }
+        return false;
+
+
+    }
 }
