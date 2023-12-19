@@ -1,7 +1,7 @@
 ﻿
 namespace AddressBook.ConsoleApp.Services;
 
-public class TryAgainPrompt
+public class RepeatsService
 {
     public static void TryAgain(string tryWhat, Action methodAgain)
     {
@@ -15,5 +15,11 @@ public class TryAgainPrompt
         {
             MainMenuService.ShowMainMenu();
         }
+    }
+    public static void OptionTitle(string option)
+    {
+        Console.Clear();
+        Console.WriteLine($"###### {option} ######");
+        Console.WriteLine();
     }
 }

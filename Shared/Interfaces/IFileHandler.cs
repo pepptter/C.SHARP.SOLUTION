@@ -18,4 +18,7 @@ internal interface IFileHandler
     /// <param name="filePath">Filepath with extension (eg. c:\filefolder\file.json)</param>
     /// <returns>Returns file content as string if file exists, else returns null</returns>
     string GetContentFromFile(string filePath);
+
+    bool SaveToFileAfterRemovedPerson(string filePath, List<IPerson> persons);
+
 }

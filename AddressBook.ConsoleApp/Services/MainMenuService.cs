@@ -29,7 +29,7 @@ internal class MainMenuService
     public static void MainMenuChooser()
     {
         var parsed = int.TryParse(Console.ReadLine(), out int menuChoice);
-        if (!parsed)
+        if (!parsed || menuChoice < 1 || menuChoice > 5)
         {
             Console.WriteLine("INVALID CHOICE, PLEASE ENTER A NUMBER FROM 1 TO 5");
             MainMenuChooser();
@@ -38,10 +38,10 @@ internal class MainMenuService
         switch (menuChoice)
         {
             case 1:
-                AddPersonMenu();
+                ShowAddPersonMenu();
                 break;
             case 2:
-                RemovePersonMenu();
+                ShowRemovePersonMenu();
                 break;
             case 3:
                 ShowFullAddressBook();
@@ -50,7 +50,7 @@ internal class MainMenuService
                 ShowContactByEmail();
                 break;
             case 5:
-                Environment.Exit(0);
+                ShowExitConfirmationOption();
                 break;
         }
     }
@@ -58,59 +58,57 @@ internal class MainMenuService
     //The main menus option to add a person to the list
     //asks the user for inputs and adds the person to the list through the AddPersonToList method
     //after the person has been added it asks the user if it wants to add another one through the TryAgain method in TryAgainPrompt.cs
-    public static void AddPersonMenu()
+    private static void ShowAddPersonMenu()
     {
         IPerson person = new Person();
 
-        Console.Clear();
-        Console.WriteLine($"{"",-5} ADD A CONTACT");
-        Console.WriteLine("--------------------------------");
+        RepeatsService.OptionTitle("ADD A PERSON");
         Console.Write("ENTER FIRST NAME: ");
         person.FirstName = Console.ReadLine()!;
         Console.Write("ENTER LAST NAME: ");
         person.LastName = Console.ReadLine()!;
-        Console.WriteLine("ENTER EMAIL ADDRESS: ");
+        Console.Write("ENTER EMAIL ADDRESS: ");
         person.Email = Console.ReadLine()!;
-        Console.WriteLine("ENTER PHONE NUMBER: ");
+        Console.Write("ENTER PHONE NUMBER: ");
         person.PhoneNumber = Console.ReadLine()!;
-        Console.WriteLine("ENTER ADDRESS: ");
+        Console.Write("ENTER ADDRESS: ");
         person.Address = Console.ReadLine()!;
 
-        _personService.AddPersonToList(person);
+        var result = _personService.AddPersonToList(person);
 
-        TryAgainPrompt.TryAgain("ADD ANOTHER PERSON", AddPersonMenu);
+        RepeatsService.TryAgain("ADD ANOTHER PERSON", ShowAddPersonMenu);
     }
     //The main menus option to remove a person from the list
     //asks the user if it knows the persons email, if the user answers yes it asks for the email and removes the person if the email exists
     //if the email does not exists the person is told so and gets asked if it wants to try again.
     //if the user answers that it doesn't know the persons email, it is asked if it wants to see the full addressbook to find out the email of the person
     //after the person has been removed it asks the user if it wants to remove another one through the TryAgain method in TryAgainPrompt.cs
-    public static void RemovePersonMenu()
+    private static void ShowRemovePersonMenu()
     {
-        Console.Clear();
-        Console.WriteLine("DO YOU KNOW THE EMAIL OF THE PERSON YOU WANT TO REMOVE? Y/N");
-        string option = Console.ReadLine()!.ToUpper();
-        if (option == "Y")
+        RepeatsService.OptionTitle("REMOVE A PERSON");
+        Console.WriteLine("DO YOU KNOW THE EMAIL OF THE PERSON YOU WANT TO REMOVE? (Y/N)");
+        var option = Console.ReadLine() ?? "";
+        if (option.Equals("Y", StringComparison.OrdinalIgnoreCase))
         {
             Console.Write("ENTER PERSONS EMAIL ADDRESS: ");
             bool result = _personService.RemovePersonByEmail(Console.ReadLine()!);
             if (result == true)
             {
                 Console.WriteLine("PERSON SUCCESSFULLY REMOVED");
-                TryAgainPrompt.TryAgain("REMOVE ANOTHER PERSON", AddPersonMenu);
+                RepeatsService.TryAgain("REMOVE ANOTHER PERSON", ShowRemovePersonMenu);
             }
             else
             {
                 Console.WriteLine("SOMETHING WENT WRONG OR EMAIL NOT FOUND, CHECK ERROR");
-                TryAgainPrompt.TryAgain("TRY AGAIN", AddPersonMenu);
+                RepeatsService.TryAgain("TRY AGAIN", ShowRemovePersonMenu);
             }
         }
         else
         {
             Console.Clear();
-            Console.WriteLine("DO YOU WANT TO SHOW THE FULL ADDRESSBOOK TO FIND OUT THE EMAIL? Y/N: ");
-            string option2 = Console.ReadLine()!.ToUpper();
-            if (option2 == "Y")
+            Console.WriteLine("DO YOU WANT TO SHOW THE FULL ADDRESSBOOK TO FIND OUT THE EMAIL? (Y/N): ");
+            string option2 = Console.ReadLine() ?? "";
+            if (option2.Equals("Y", StringComparison.OrdinalIgnoreCase))
                 ShowFullAddressBook();            
             else
                 ShowMainMenu();
@@ -119,11 +117,12 @@ internal class MainMenuService
     //The main menus option to show full information of a person from entering the persons email
     //asks the user for inputs and adds the person to the list through the AddPersonToList method
     //after the person has been added it asks the user if it wants to add another one through the TryAgain method in TryAgainPrompt.cs
-    public static void ShowContactByEmail()
+    private static void ShowContactByEmail()
     {
-        Console.WriteLine("DO YOU KNOW THE EMAIL OF THE PERSON YOU WANT TO KNOW MORE ABOUT? Y/N");
-        string option = Console.ReadLine()!.ToUpper();
-        if (option == "Y")
+        RepeatsService.OptionTitle("SHOW A CONTACT BY EMAIL");
+        Console.WriteLine("DO YOU KNOW THE EMAIL OF THE PERSON YOU WANT TO KNOW MORE ABOUT? (Y/N)");
+        var option = Console.ReadLine() ?? "";
+        if (option.Equals("Y", StringComparison.OrdinalIgnoreCase))
         {
             Console.Write("ENTER PERSONS EMAIL ADDRESS: ");
             var searchEmail = Console.ReadLine();
@@ -132,21 +131,22 @@ internal class MainMenuService
             {
                 Console.WriteLine($"FULL INFORMATION OF THE PERSON WITH THE EMAIL ADDRESS: {fullPerson.Email}");
                 Console.WriteLine($"NAME: {fullPerson.FirstName} {fullPerson.LastName}");
+                Console.WriteLine($"EMAIL: {fullPerson.Email}");
                 Console.WriteLine($"PHONENUMBER: {fullPerson.PhoneNumber}");
                 Console.WriteLine($"ADDRESS: {fullPerson.Address}");
                 Console.WriteLine();
-                TryAgainPrompt.TryAgain("SEARCH FOR ANOTHER PERSON", ShowContactByEmail);
+                RepeatsService.TryAgain("SEARCH FOR ANOTHER PERSON", ShowContactByEmail);
 
             }
             else
             {
                 Console.WriteLine("SOMETHING WENT WRONG OR EMAIL NOT FOUND, CHECK ERROR");
-                TryAgainPrompt.TryAgain("TRY AGAIN", ShowContactByEmail);
+                RepeatsService.TryAgain("TRY AGAIN", ShowContactByEmail);
             }
         }
         else
         {
-            Console.WriteLine("DO YOU WANT TO SHOW THE FULL ADDRESSBOOK TO FIND OUT THE EMAIL? Y/N: ");
+            Console.WriteLine("DO YOU WANT TO SHOW THE FULL ADDRESSBOOK TO FIND OUT THE EMAIL? (Y/N): ");
             string option2 = Console.ReadLine()!.ToUpper();
             if (option2 == "Y")
                 ShowFullAddressBook();
@@ -154,21 +154,39 @@ internal class MainMenuService
                 ShowMainMenu();
         }
     }
-    public static void ShowFullAddressBook()
+    //The main menus option to show the full addressbook
+    //prints the full list of persons, one person per line
+    //prints the firstname, the lastname and the email
+    private static void ShowFullAddressBook()
     {
-        Console.Clear();
+
+        RepeatsService.OptionTitle("SHOW FULL ADDRESSBOOK");
         var persons = _personService.GetPersonsFromList();
         foreach (var person in persons)
         {
-            Console.WriteLine($"Name: {person.FirstName} {person.LastName}");
-            Console.WriteLine($"Email: {person.Email}");
-            Console.WriteLine($"Phone: {person.PhoneNumber}");
-            Console.WriteLine($"Address: {person.Address}");
-            Console.WriteLine();
-
+            Console.WriteLine($"Name: {person.FirstName} {person.LastName} <{person.Email}>" );          
         }
+        Console.WriteLine();
         Console.WriteLine("Press any key to return to the main menu: ");
         Console.ReadKey();
         ShowMainMenu();
+    }
+
+    //The main menus exit option
+    //asks the user to confirm that it wants to exit the application
+    //else it returns to the main menu
+    private static void ShowExitConfirmationOption() 
+    {
+        Console.Clear();
+        Console.WriteLine("ARE YOU SURE YOU WANT TO EXIT THE APPLICATION? (Y/N): ");
+        var option = Console.ReadLine() ?? "";
+        if (option.Equals("Y", StringComparison.OrdinalIgnoreCase))
+        {
+            Environment.Exit(0);
+        }
+        else
+        {
+            ShowMainMenu();
+        }
     }
 }
