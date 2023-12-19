@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Shared.Interfaces;
 using Shared.Models;
+using Shared.Models.Responses;
 using System.Diagnostics;
 
 namespace Shared.Services;
@@ -33,16 +34,22 @@ internal class FileHandler : IFileHandler
     /// <param name="filePath">Filepath with extension (eg. c:\filefolder\file.json)</param>
     /// <param name="content">Content as a string</param>
     /// <returns>Returns true if successfully save, else writes debug message and returns false</returns>
-    public bool SaveContentToFile(string filePath, string content)
+    public IServiceResult SaveContentToFile(string filePath, string content)
     {
+        IServiceResult response = new ServiceResult();
+
         try
         {
             using var sw = new StreamWriter(filePath);
             sw.WriteLine(content);
-            return true;
+            response.Status = Enums.ServiceResultStatus.SUCCESS;
         }
-        catch (Exception ex) { Debug.WriteLine("FileHandler - SaveContentToFile" + ex.Message); }
-        return false;
+        catch (Exception ex)
+        {
+            Debug.WriteLine("FileHandler - SaveContentToFile" + ex.Message);
+            response.Status = Enums.ServiceResultStatus.FAILED;
+        }
+        return response;
     }
     /// <summary>
     /// Save file after a person has been removed from the file
@@ -50,19 +57,21 @@ internal class FileHandler : IFileHandler
     /// <param name="filePath">Filepath with extension (eg. c:\filefolder\file.json)</param>
     /// <param name="persons">The name of the list</param>
     /// <returns>Returns true if successfully save, else writes debug message and returns false</returns>
-    public bool SaveToFileAfterRemovedPerson(string filePath, List<IPerson> persons)
+    public IServiceResult SaveToFileAfterRemovedPerson(string filePath, List<IPerson> persons)
     {
+        IServiceResult response = new ServiceResult();
         try
         {
             string json = JsonConvert.SerializeObject(persons, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
             using var sw = new StreamWriter(filePath);
             sw.WriteLine(json);
-            return true;
+            response.Status = Enums.ServiceResultStatus.SUCCESS;
         }
         catch (Exception ex)
         {
             Debug.WriteLine("FileHandler - SaveToFileAfterRemovedPerson Exception: " + ex.Message);
-            return false;
+            response.Status = Enums.ServiceResultStatus.FAILED;
         }
+        return response;
     }
 }

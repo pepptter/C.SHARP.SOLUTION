@@ -1,4 +1,6 @@
-﻿namespace Shared.Interfaces;
+﻿using Shared.Models.Responses;
+
+namespace Shared.Interfaces;
 
 internal interface IFileHandler
 {
@@ -9,7 +11,7 @@ internal interface IFileHandler
     /// <param name="filePath">Filepath with extension (eg. c:\filefolder\file.json)</param>
     /// <param name="content">Content as a string</param>
     /// <returns>Returns true if successfully saved, else false</returns>
-    bool SaveContentToFile(string filePath, string content);
+    IServiceResult SaveContentToFile(string filePath, string content);
 
     
     /// <summary>
@@ -19,6 +21,6 @@ internal interface IFileHandler
     /// <returns>Returns file content as string if file exists, else returns null</returns>
     string GetContentFromFile(string filePath);
 
-    bool SaveToFileAfterRemovedPerson(string filePath, List<IPerson> persons);
+    IServiceResult SaveToFileAfterRemovedPerson(string filePath, List<IPerson> persons);
 
 }

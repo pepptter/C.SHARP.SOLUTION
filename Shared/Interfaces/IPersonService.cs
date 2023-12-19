@@ -1,4 +1,6 @@
-﻿namespace Shared.Interfaces;
+﻿using Shared.Models.Responses;
+
+namespace Shared.Interfaces;
 
 public interface IPersonService
 {
@@ -8,7 +10,7 @@ public interface IPersonService
     /// </summary>
     /// <param name="person">a person of type IPerson</param>
     /// <returns>Returns true if successful, false if it fails or email already exists</returns>
-    bool AddPersonToList(IPerson person);
+    IServiceResult AddPersonToList(IPerson person);
 
     /// <summary>
     /// Gets all persons from the list
@@ -22,14 +24,14 @@ public interface IPersonService
     /// </summary>
     /// <param name="email">The email of the person in the list that you want information about/param>
     /// <returns>Returns the persons full information, or an error if the email doesn't exist</returns>
-    IPerson GetPersonByEmail(string email);
+    IServiceResult GetPersonByEmail(string email);
 
     /// <summary>
     /// Enter a persons email to remove that person from the list
     /// </summary>
     /// <param name="email">The email of the person you want to remove</param>
     /// <returns>Returns true if successfully removed, false if something went wrong or email didn't exist</returns>
-    bool RemovePersonByEmail(string email);
+    IServiceResult RemovePersonByEmail(string email);
 
    
 }

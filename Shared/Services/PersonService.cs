@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Shared.Enums;
 using Shared.Interfaces;
+using Shared.Models.Responses;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 
@@ -17,8 +19,9 @@ public class PersonService : IPersonService
 
 
 
-    public bool AddPersonToList(IPerson person)
+    public IServiceResult AddPersonToList(IPerson person)
     {
+        IServiceResult response = new ServiceResult();
         try
         {
             if (!_persons.Any(x => string.Equals(x.Email, person.Email, StringComparison.OrdinalIgnoreCase)))
@@ -26,29 +29,49 @@ public class PersonService : IPersonService
                 _persons.Add(person);
                 string json = JsonConvert.SerializeObject(_persons, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All});
                 var result = _fileHandler.SaveContentToFile(_filePath, json);
-                return result;
+                response.Status = ServiceResultStatus.SUCCESS;                
             }
-            else
+            else 
             {
-               Console.WriteLine("Duplicate email found: " + person.Email);
-                return false;
+                response.Status = ServiceResultStatus.ALREADY_EXISTS;
             }
         }
-        catch (Exception ex) { Debug.WriteLine("PersonService - AddPersonToList" + ex.Message); }
-        return false;
+        catch (Exception ex) 
+        { 
+            Debug.WriteLine("PersonService - AddPersonToList" + ex.Message);
+            response.Status = ServiceResultStatus.FAILED;
+            response.Result = ex.Message;
+        }
+        return response;
     }
 
 
-    public IPerson GetPersonByEmail(string email)
+    public IServiceResult GetPersonByEmail(string email)
     {
         try
         {
             GetPersonsFromList();
             var person = _persons.FirstOrDefault(x => x.Email == email);
-            return person ??= null!;
+            if (person != null)
+            {
+                var result = new ServiceResult
+                {
+                    Status = ServiceResultStatus.SUCCESS,
+                    Result = person
+                };
+
+                return result;
+            }
+            else
+            {
+                return new ServiceResult { Status = ServiceResultStatus.NOT_FOUND };
+            }
         }
-        catch (Exception ex) { Debug.WriteLine("PersonService - GetPersonByEmail" + ex.Message); }
-        return null!;
+        catch (Exception ex) 
+        { 
+            Debug.WriteLine("PersonService - GetPersonByEmail" + ex.Message); 
+            return new ServiceResult { Status = ServiceResultStatus.FAILED, Result = ex.Message };
+        }
     }
 
     public IEnumerable<IPerson> GetPersonsFromList()
@@ -66,8 +89,9 @@ public class PersonService : IPersonService
         return null!;
     }
 
-    public bool RemovePersonByEmail(string email)
+    public IServiceResult RemovePersonByEmail(string email)
     {
+        IServiceResult response = new ServiceResult();
         try
         {
             GetPersonsFromList();
@@ -76,12 +100,22 @@ public class PersonService : IPersonService
             {
                 _persons.Remove(person);
                 _fileHandler.SaveToFileAfterRemovedPerson(_filePath, _persons);
+                response.Status = Enums.ServiceResultStatus.DELETED;
             }
-            return true;
-
+            else
+            {
+                response.Status = Enums.ServiceResultStatus.NOT_FOUND;
+                response.Result = "Person not found";
+            }
         }
-        catch (Exception ex) { Debug.WriteLine("PersonService - RemovePersonByEmail" + ex.Message); }
-        return false;
+        catch (Exception ex)
+        { 
+            Debug.WriteLine("PersonService - RemovePersonByEmail" + ex.Message);
+            response.Status = Enums.ServiceResultStatus.FAILED;
+            response.Result = ex.Message;
+        }
+
+        return response;
     }
 
     private void LoadPersonsFromFileIfExists()

@@ -5,9 +5,9 @@ public class RepeatsService
 {
     public static void TryAgain(string tryWhat, Action methodAgain)
     {
-        Console.Write($"WOULD YOU LIKE TO {tryWhat}? Y/N: ");
-        string option = Console.ReadLine()!.ToUpper();
-        if (option == "Y")
+        Console.Write($"WOULD YOU LIKE TO {tryWhat}? (Y/N): ");
+        var option = Console.ReadLine() ?? "";
+        if (option.Equals("Y", StringComparison.OrdinalIgnoreCase))
         {
             methodAgain();
         }
