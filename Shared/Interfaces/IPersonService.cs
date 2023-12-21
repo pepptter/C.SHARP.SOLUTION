@@ -2,35 +2,37 @@
 
 namespace Shared.Interfaces;
 
+/// <summary>
+/// Services for managing operations related to persons, such as adding, retrieving, and removing.
+/// </summary>
 public interface IPersonService
 {
 
     /// <summary>
-    /// Add a person to the addressbooks list
+    /// Adds a person to the list and saves the updated list to a file.
     /// </summary>
-    /// <param name="person">a person of type IPerson</param>
-    /// <returns>Returns true if successful, false if it fails or email already exists</returns>
+    /// <param name="person">The person to be added.</param>
+    /// <returns>A service result indicating success or failure.</returns>
     IServiceResult AddPersonToList(IPerson person);
 
     /// <summary>
-    /// Gets all persons from the list
+    /// Retrieves the list of persons from the file.
     /// </summary>
-    /// <returns>Returns the list or</returns>
-
+    /// <returns>The list of persons.</returns>
     IEnumerable<IPerson> GetPersonsFromList();
 
     /// <summary>
-    /// Enter a persons email to get that persons full information
+    /// Retrieves a person by email address.
     /// </summary>
-    /// <param name="email">The email of the person in the list that you want information about/param>
-    /// <returns>Returns the persons full information, or an error if the email doesn't exist</returns>
+    /// <param name="email">The email address of the person to retrieve.</param>
+    /// <returns>A service result containing the retrieved person or a status indicating failure.</returns>
     IServiceResult GetPersonByEmail(string email);
 
     /// <summary>
-    /// Enter a persons email to remove that person from the list
+    /// Removes a person by email address and saves the updated list to the file.
     /// </summary>
-    /// <param name="email">The email of the person you want to remove</param>
-    /// <returns>Returns true if successfully removed, false if something went wrong or email didn't exist</returns>
+    /// <param name="email">The email address of the person to remove.</param>
+    /// <returns>A service result indicating success or failure.</returns>
     IServiceResult RemovePersonByEmail(string email);
 
    

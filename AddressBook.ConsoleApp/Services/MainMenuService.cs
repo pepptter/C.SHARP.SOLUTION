@@ -5,11 +5,16 @@ using Shared.Services;
 
 namespace AddressBook.ConsoleApp.Services;
 
+/// <summary>
+/// Service for managing the main menu and its options in the addressbook console application.
+/// </summary>
 internal class MainMenuService
 {
     private static readonly IPersonService _personService = new PersonService();
 
-    //shows the main menu options and asks the user to enter an option
+    /// <summary>
+    /// Shows the main menu options and asks the user to enter an option.
+    /// </summary>
     public static void ShowMainMenu()
     {
         Console.Clear();
@@ -25,8 +30,9 @@ internal class MainMenuService
         Console.Write("ENTER YOUR CHOICE (1-5): ");
         MainMenuChooser();
     }
-    //takes the user entered option and checks if it's valid, if so it enters the correct menu option
-    //else the option is not valid, it asks the user to try again
+    /// <summary>
+    /// Takes the user-entered option and checks if it's valid. Enters the correct menu option or prompts the user to try again.
+    /// </summary>
     public static void MainMenuChooser()
     {
         var parsed = int.TryParse(Console.ReadLine(), out int menuChoice);
@@ -56,14 +62,14 @@ internal class MainMenuService
         }
     }
 
-    //The main menus option to add a person to the list
-    //asks the user for inputs and adds the person to the list through the AddPersonToList method
-    //after the person has been added it asks the user if it wants to add another one through the TryAgain method in TryAgainPrompt.cs
+    /// <summary>
+    /// The main menu's option to add a person to the list.
+    /// </summary>
     private static void HandleAddPersonMenu()
     {
         IPerson person = new Person();
 
-        RepeatsService.OptionTitle("ADD A PERSON");
+        RepeatsService.OptionTitle("ADD A CONTACT");
         Console.Write("ENTER FIRST NAME: ");
         person.FirstName = Console.ReadLine()!;
         Console.Write("ENTER LAST NAME: ");
@@ -90,27 +96,26 @@ internal class MainMenuService
 
         }
 
-        RepeatsService.TryAgain("ADD ANOTHER PERSON", HandleAddPersonMenu);
+        RepeatsService.TryAgain("ADD ANOTHER CONTACT", HandleAddPersonMenu);
     }
-    //The main menus option to remove a person from the list
-    //asks the user if it knows the persons email, if the user answers yes it asks for the email and removes the person if the email exists
-    //if the email does not exists the person is told so and gets asked if it wants to try again.
-    //if the user answers that it doesn't know the persons email, it is asked if it wants to see the full addressbook to find out the email of the person
-    //after the person has been removed it asks the user if it wants to remove another one through the TryAgain method in TryAgainPrompt.cs
+
+    /// <summary>
+    /// The main menu's option to remove a person from the list.
+    /// </summary>
     private static void HandleRemovePersonMenu()
     {
-        RepeatsService.OptionTitle("REMOVE A PERSON");
-        Console.WriteLine("DO YOU KNOW THE EMAIL OF THE PERSON YOU WANT TO REMOVE? (Y/N)");
+        RepeatsService.OptionTitle("REMOVE A CONTACT");
+        Console.WriteLine("DO YOU KNOW THE EMAIL OF THE CONTACT YOU WANT TO REMOVE? (Y/N)");
         var option = Console.ReadLine() ?? "";
         if (option.Equals("Y", StringComparison.OrdinalIgnoreCase))
         {
-            Console.Write("ENTER PERSONS EMAIL ADDRESS: ");
+            Console.Write("ENTER CONTACTS EMAIL ADDRESS: ");
             IServiceResult result = _personService.RemovePersonByEmail(Console.ReadLine()!);
             switch(result.Status)
             {
                 case ServiceResultStatus.DELETED:
-                    Console.WriteLine("PERSON SUCCESSFULLY REMOVED");
-                    RepeatsService.TryAgain("REMOVE ANOTHER PERSON", HandleRemovePersonMenu);
+                    Console.WriteLine("CONTACT SUCCESSFULLY REMOVED");
+                    RepeatsService.TryAgain("REMOVE ANOTHER CONTACT", HandleRemovePersonMenu);
                     break;
                 case ServiceResultStatus.NOT_FOUND:
                     Console.WriteLine("EMAIL ADDRESS NOT FOUND");
@@ -133,9 +138,10 @@ internal class MainMenuService
                 ShowMainMenu();
         }
     }
-    //The main menus option to show full information of a person from entering the persons email
-    //asks the user for inputs and adds the person to the list through the AddPersonToList method
-    //after the person has been added it asks the user if it wants to add another one through the TryAgain method in TryAgainPrompt.cs
+
+    /// <summary>
+    /// The main menu's option to show full information of a person by entering the person's email.
+    /// </summary>
     private static void ShowContactByEmail()
     {
         RepeatsService.OptionTitle("SHOW A CONTACT BY EMAIL");
@@ -143,7 +149,7 @@ internal class MainMenuService
         var option = Console.ReadLine() ?? "";
         if (option.Equals("Y", StringComparison.OrdinalIgnoreCase))
         {
-            Console.Write("ENTER PERSONS EMAIL ADDRESS: ");
+            Console.Write("ENTER CONTACTS EMAIL ADDRESS: ");
             IServiceResult result = _personService.GetPersonByEmail(Console.ReadLine()!);
 
             if (result.Status != ServiceResultStatus.ALREADY_EXISTS && result.Result != null)
@@ -175,9 +181,9 @@ internal class MainMenuService
                 ShowMainMenu();
         }
     }
-    //The main menus option to show the full addressbook
-    //prints the full list of persons, one person per line
-    //prints the firstname, the lastname and the email
+    /// <summary>
+    /// The main menu's option to show the full address book.
+    /// </summary>
     private static void ShowFullAddressBook(string returnMethod, Action returnOption)
     {
 
@@ -200,9 +206,9 @@ internal class MainMenuService
         ShowMainMenu();
     }
 
-    //The main menus exit option
-    //asks the user to confirm that it wants to exit the application
-    //else it returns to the main menu
+    /// <summary>
+    /// The main menu's exit option. Asks the user to confirm exiting the application.
+    /// </summary>
     private static void ShowExitConfirmationOption() 
     {
         Console.Clear();

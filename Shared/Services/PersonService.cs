@@ -11,6 +11,11 @@ public class PersonService : IPersonService
 {
     private readonly IFileHandler _fileHandler = new FileHandler();
     private List<IPerson> _persons = [];
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PersonService"/> class.
+    /// Loads the list persons from a file if the file exists.
+    /// </summary>
     public PersonService()
     {
         LoadPersonsFromFileIfExists();
