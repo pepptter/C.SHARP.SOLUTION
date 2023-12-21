@@ -5,7 +5,7 @@ namespace Shared.Interfaces;
 /// <summary>
 /// Services for handling file operations, such as reading and saving content.
 /// </summary>
-internal interface IFileHandler
+public interface IFileHandler
 {
 
     /// <summary>

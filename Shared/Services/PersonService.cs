@@ -11,16 +11,16 @@ public class PersonService : IPersonService
 {
     private readonly IFileHandler _fileHandler = new FileHandler();
     private List<IPerson> _persons = [];
-
+    private readonly string _filePath;
     /// <summary>
     /// Initializes a new instance of the <see cref="PersonService"/> class.
     /// Loads the list persons from a file if the file exists.
     /// </summary>
-    public PersonService()
+    public PersonService(string filePath)
     {
-        LoadPersonsFromFileIfExists();
+        _filePath = filePath;
+        LoadPersonsFromFileIfExists(_filePath);
     }
-    private readonly string _filePath = @"c:\plugg\textfiles\Addressbook.json";
 
 
 
@@ -123,9 +123,9 @@ public class PersonService : IPersonService
         return response;
     }
 
-    private void LoadPersonsFromFileIfExists()
+    private void LoadPersonsFromFileIfExists(string filePath)
     {
-        var content = _fileHandler.GetContentFromFile(_filePath);
+        var content = _fileHandler.GetContentFromFile(filePath);
         if (!string.IsNullOrEmpty(content))
         {
             _persons = JsonConvert.DeserializeObject<List<IPerson>>(content, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All })!;

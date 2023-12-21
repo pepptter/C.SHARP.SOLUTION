@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Shared.Services;
 
 
-internal class FileHandler : IFileHandler
+public class FileHandler : IFileHandler
 {
 
     public string GetContentFromFile(string filePath)

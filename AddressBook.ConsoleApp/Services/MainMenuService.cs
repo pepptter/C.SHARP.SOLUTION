@@ -10,7 +10,7 @@ namespace AddressBook.ConsoleApp.Services;
 /// </summary>
 internal class MainMenuService
 {
-    private static readonly IPersonService _personService = new PersonService();
+    private static readonly IPersonService _personService = new PersonService(@"c:\plugg\textfiles\Addressbook.json");
 
     /// <summary>
     /// Shows the main menu options and asks the user to enter an option.
@@ -51,7 +51,7 @@ internal class MainMenuService
                 HandleRemovePersonMenu();
                 break;
             case 3:
-                ShowFullAddressBook(null, null);
+                ShowFullAddressBook(null!, null!);
                 break;
             case 4:
                 ShowContactByEmail();
@@ -203,6 +203,8 @@ internal class MainMenuService
                 returnOption();
             }
         }
+        Console.WriteLine("PRESS ANY KEY TO RETURN TO MAIN MENU");
+        Console.ReadKey();
         ShowMainMenu();
     }
 
