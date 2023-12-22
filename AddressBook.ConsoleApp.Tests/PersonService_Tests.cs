@@ -1,5 +1,8 @@
-﻿using Shared.Enums;
+﻿using Moq;
+using Shared.Enums;
+using Shared.Interfaces;
 using Shared.Models;
+using Shared.Models.Responses;
 using Shared.Services;
 
 namespace AddressBook.ConsoleApp.Tests;
@@ -11,7 +14,10 @@ public class PersonService_Tests
     {
         // Arrange
         var testFilePath = @"c:\plugg\textfiles\Test.json";
-        var personService = new PersonService(testFilePath);
+        var mockFileHandler = new Mock<IFileHandler>();
+        mockFileHandler.Setup(x => x.SaveContentToFile(It.IsAny<string>(), It.IsAny<string>())).Returns(new ServiceResult { Status = ServiceResultStatus.SUCCESS });
+        var personService = new PersonService(mockFileHandler.Object, testFilePath);
+
         var person = new Person
         {
             FirstName = "Karl",
@@ -26,14 +32,17 @@ public class PersonService_Tests
 
         // Assert
         Assert.Equal(ServiceResultStatus.SUCCESS, result.Status);
-        File.Delete(testFilePath);
+        mockFileHandler.Verify(x => x.SaveContentToFile(testFilePath, It.IsAny<string>()), Times.Once);
     }
     [Fact]
     public void AddPersonToList_DuplicateEmail_ReturnsAlreadyExistsStatus()
     {
         // Arrange
         var testFilePath = @"c:\plugg\textfiles\Test.json";
-        var personService = new PersonService(testFilePath);
+        var mockFileHandler = new Mock<IFileHandler>();
+        mockFileHandler.Setup(x => x.SaveContentToFile(It.IsAny<string>(), It.IsAny<string>())).Returns(new ServiceResult { Status = ServiceResultStatus.SUCCESS });
+        var personService = new PersonService(mockFileHandler.Object, testFilePath);
+
         var person1 = new Person
         {
             FirstName = "Sven",
@@ -56,14 +65,17 @@ public class PersonService_Tests
 
         // Assert
         Assert.Equal(ServiceResultStatus.ALREADY_EXISTS, result.Status);
-        File.Delete(testFilePath);
+
     }
     [Fact]
     public void GetPersonByEmail_PersonExists_ReturnsPersonWithSuccessStatus()
     {
         // Arrange
         var testFilePath = @"c:\plugg\textfiles\Test.json";
-        var personService = new PersonService(testFilePath);
+        var mockFileHandler = new Mock<IFileHandler>();
+        mockFileHandler.Setup(x => x.SaveContentToFile(It.IsAny<string>(), It.IsAny<string>())).Returns(new ServiceResult { Status = ServiceResultStatus.SUCCESS });
+        var personService = new PersonService(mockFileHandler.Object, testFilePath);
+
         var person = new Person
         {
             Id = Guid.NewGuid(),
@@ -81,7 +93,6 @@ public class PersonService_Tests
         // Assert
         Assert.Equal(ServiceResultStatus.SUCCESS, result.Status);
         Assert.IsType<Person>(result.Result);
-        File.Delete(testFilePath);
 
     }
     [Fact]
@@ -89,7 +100,9 @@ public class PersonService_Tests
     {
         // Arrange
         var testFilePath = @"c:\plugg\textfiles\Test.json";
-        var personService = new PersonService(testFilePath);
+        var mockFileHandler = new Mock<IFileHandler>();
+        mockFileHandler.Setup(x => x.SaveContentToFile(It.IsAny<string>(), It.IsAny<string>())).Returns(new ServiceResult { Status = ServiceResultStatus.SUCCESS });
+        var personService = new PersonService(mockFileHandler.Object, testFilePath);
         var person = new Person
         {
             Id = System.Guid.NewGuid(),
@@ -107,28 +120,31 @@ public class PersonService_Tests
         // Assert
         Assert.Equal(ServiceResultStatus.DELETED, result.Status);
         Assert.Null(personService.GetPersonByEmail("sven@domain.com").Result);
-        File.Delete(testFilePath);
     }
     [Fact]
     public void RemovePersonByEmail_PersonNotFound_ReturnsNotFoundStatus()
     {
         // Arrange
         var testFilePath = @"c:\plugg\textfiles\Test.json";
-        var personService = new PersonService(testFilePath);
+        var mockFileHandler = new Mock<IFileHandler>();
+        mockFileHandler.Setup(x => x.SaveContentToFile(It.IsAny<string>(), It.IsAny<string>())).Returns(new ServiceResult { Status = ServiceResultStatus.SUCCESS });
+        var personService = new PersonService(mockFileHandler.Object, testFilePath);
 
         // Act
         var result = personService.RemovePersonByEmail("testmail@domain.com");
 
         // Assert
         Assert.Equal(ServiceResultStatus.NOT_FOUND, result.Status);
-        File.Delete(testFilePath);
+
     }
     [Fact]
     public void GetPersonByEmail_PersonNotFound_ReturnsNotFoundStatus()
     {
         // Arrange
         var testFilePath = @"c:\plugg\textfiles\Test.json";
-        var personService = new PersonService(testFilePath);
+        var mockFileHandler = new Mock<IFileHandler>();
+        mockFileHandler.Setup(x => x.SaveContentToFile(It.IsAny<string>(), It.IsAny<string>())).Returns(new ServiceResult { Status = ServiceResultStatus.SUCCESS });
+        var personService = new PersonService(mockFileHandler.Object, testFilePath);
 
         // Act
         var result = personService.GetPersonByEmail("testmail@domain.com");
@@ -136,7 +152,6 @@ public class PersonService_Tests
         // Assert
         Assert.Equal(ServiceResultStatus.NOT_FOUND, result.Status);
         Assert.Null(result.Result);
-        File.Delete(testFilePath);
     }
 
 }

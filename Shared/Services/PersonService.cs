@@ -9,17 +9,22 @@ namespace Shared.Services;
 
 public class PersonService : IPersonService
 {
-    private readonly IFileHandler _fileHandler = new FileHandler();
+    private readonly IFileHandler _fileHandler;
     private List<IPerson> _persons = [];
     private readonly string _filePath;
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="PersonService"/> class.
-    /// Loads the list persons from a file if the file exists.
+    /// Initializes a new instance of the PersonService class.
+    /// Loads the list of persons from a file if the file exists.
     /// </summary>
-    public PersonService(string filePath)
+    /// <param name="fileHandler">The file handler service.</param>
+    /// <param name="filePath">The file path to the savefile.</param>
+    public PersonService(IFileHandler fileHandler, string filePath)
     {
+        _fileHandler = fileHandler ?? throw new ArgumentNullException(nameof(fileHandler));
         _filePath = filePath;
-        LoadPersonsFromFileIfExists(_filePath);
+
+        LoadPersonsFromFileIfExists();
     }
 
 
@@ -123,9 +128,9 @@ public class PersonService : IPersonService
         return response;
     }
 
-    private void LoadPersonsFromFileIfExists(string filePath)
+    private void LoadPersonsFromFileIfExists()
     {
-        var content = _fileHandler.GetContentFromFile(filePath);
+        var content = _fileHandler.GetContentFromFile(_filePath);
         if (!string.IsNullOrEmpty(content))
         {
             _persons = JsonConvert.DeserializeObject<List<IPerson>>(content, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All })!;

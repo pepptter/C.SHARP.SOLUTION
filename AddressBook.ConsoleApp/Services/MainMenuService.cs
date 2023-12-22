@@ -10,7 +10,7 @@ namespace AddressBook.ConsoleApp.Services;
 /// </summary>
 internal class MainMenuService
 {
-    private static readonly IPersonService _personService = new PersonService(@"c:\plugg\textfiles\Addressbook.json");
+    private static readonly IPersonService _personService = new PersonService(new FileHandler(), @"c:\plugg\textfiles\Addressbook.json");
 
     /// <summary>
     /// Shows the main menu options and asks the user to enter an option.
@@ -105,7 +105,7 @@ internal class MainMenuService
     private static void HandleRemovePersonMenu()
     {
         RepeatsService.OptionTitle("REMOVE A CONTACT");
-        Console.WriteLine("DO YOU KNOW THE EMAIL OF THE CONTACT YOU WANT TO REMOVE? (Y/N)");
+        Console.Write("DO YOU KNOW THE EMAIL OF THE CONTACT YOU WANT TO REMOVE? (Y/N):  ");
         var option = Console.ReadLine() ?? "";
         if (option.Equals("Y", StringComparison.OrdinalIgnoreCase))
         {
@@ -130,7 +130,7 @@ internal class MainMenuService
         else
         {
             Console.Clear();
-            Console.WriteLine("DO YOU WANT TO SHOW THE FULL ADDRESSBOOK TO FIND OUT THE EMAIL? (Y/N): ");
+            Console.Write("DO YOU WANT TO SHOW THE FULL ADDRESSBOOK TO FIND OUT THE EMAIL? (Y/N): ");
             string option2 = Console.ReadLine() ?? "";
             if (option2.Equals("Y", StringComparison.OrdinalIgnoreCase))
                 ShowFullAddressBook("REMOVE A CONTACT PAGE", HandleRemovePersonMenu);            
@@ -145,7 +145,7 @@ internal class MainMenuService
     private static void ShowContactByEmail()
     {
         RepeatsService.OptionTitle("SHOW A CONTACT BY EMAIL");
-        Console.WriteLine("DO YOU KNOW THE EMAIL OF THE CONTACT YOU WANT TO KNOW MORE ABOUT? (Y/N)");
+        Console.Write("DO YOU KNOW THE EMAIL OF THE CONTACT YOU WANT TO KNOW MORE ABOUT? (Y/N):  ");
         var option = Console.ReadLine() ?? "";
         if (option.Equals("Y", StringComparison.OrdinalIgnoreCase))
         {
@@ -173,7 +173,7 @@ internal class MainMenuService
         }
         else
         {
-            Console.WriteLine("DO YOU WANT TO SHOW THE FULL ADDRESSBOOK TO FIND OUT THE EMAIL? (Y/N): ");
+            Console.Write("DO YOU WANT TO SHOW THE FULL ADDRESSBOOK TO FIND OUT THE EMAIL? (Y/N): ");
             var option2 = Console.ReadLine() ?? "";
             if (option2.Equals("Y", StringComparison.OrdinalIgnoreCase))
                 ShowFullAddressBook("SHOW PERSON BY EMAIL", ShowContactByEmail);
@@ -196,7 +196,7 @@ internal class MainMenuService
         Console.WriteLine();
         if (!string.IsNullOrEmpty(returnMethod))
         {
-            Console.WriteLine($"DO YOU WANT TO RETURN TO THE {returnMethod}? (Y/N): ");
+            Console.Write($"DO YOU WANT TO RETURN TO THE {returnMethod}? (Y/N): ");
             var option = Console.ReadLine() ?? "";
             if (option.Equals("Y", StringComparison.OrdinalIgnoreCase))
             {
