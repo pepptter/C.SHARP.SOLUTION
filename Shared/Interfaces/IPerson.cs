@@ -1,5 +1,9 @@
 ﻿namespace Shared.Interfaces;
-
+/// <summary>
+/// The interface for a person
+/// ID is created when a person is created
+/// FirstName, LastName, Email, PhoneNumber, Address is required
+/// </summary>
 public interface IPerson
 {
     Guid Id { get; set; }

@@ -3,7 +3,7 @@
 namespace Shared.Interfaces;
 
 /// <summary>
-/// Services for managing operations related to persons, such as adding, retrieving, and removing.
+/// Services for managing operations related to persons, such as adding, retrieving and removing.
 /// </summary>
 public interface IPersonService
 {
@@ -34,6 +34,15 @@ public interface IPersonService
     /// <param name="email">The email address of the person to remove.</param>
     /// <returns>A service result indicating success or failure.</returns>
     IServiceResult RemovePersonByEmail(string email);
+    
+    /// <summary>
+    /// Sorts the list of persons by the input choice, firstname, lastname or email.
+    /// </summary>
+    /// <param name="input">The users choice of sorting</param>
+    /// <returns>A service result indicating updated or failure</returns>
+    IServiceResult SortPersonsByInput(int input);
 
-   
+
+
+
 }

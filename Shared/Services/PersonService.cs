@@ -3,6 +3,7 @@ using Shared.Enums;
 using Shared.Interfaces;
 using Shared.Models.Responses;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace Shared.Services;
@@ -109,19 +110,19 @@ public class PersonService : IPersonService
             if (person != null)
             {
                 _persons.Remove(person);
-                _fileHandler.SaveToFileAfterRemovedPerson(_filePath, _persons);
-                response.Status = Enums.ServiceResultStatus.DELETED;
+                _fileHandler.SaveToFileAfterChanges(_filePath, _persons);
+                response.Status = ServiceResultStatus.DELETED;
             }
             else
             {
-                response.Status = Enums.ServiceResultStatus.NOT_FOUND;
-                response.Result = "Person not found";
+                response.Status = ServiceResultStatus.NOT_FOUND;
+                response.Result = "PERSON NOT FOUND";
             }
         }
         catch (Exception ex)
         { 
             Debug.WriteLine("PersonService - RemovePersonByEmail" + ex.Message);
-            response.Status = Enums.ServiceResultStatus.FAILED;
+            response.Status = ServiceResultStatus.FAILED;
             response.Result = ex.Message;
         }
 
@@ -137,7 +138,45 @@ public class PersonService : IPersonService
         }
         else
         {
-            _persons = new List<IPerson>();
+            _persons = [];
         }
+    }
+    public IServiceResult SortPersonsByInput(int input)
+    {
+        IServiceResult response = new ServiceResult();
+        try
+        {
+            switch (input)
+            {
+                case 1:
+                    _persons = _persons.OrderBy(x => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(x.FirstName.ToLower())).ToList();
+                    response.Status = ServiceResultStatus.UPDATED;
+                    response.Result = "LIST CURRENTLY SORTED BY FIRSTNAME";
+                    break;
+                case 2:
+                    _persons = _persons.OrderBy(x => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(x.LastName.ToLower())).ToList();
+                    response.Status = ServiceResultStatus.UPDATED;
+                    response.Result = "LIST CURRENTLY SORTED BY LASTNAME";
+                    break;
+                case 3:
+                    _persons = _persons.OrderBy(x => x.Email.ToLower()).ToList();
+                    response.Status = ServiceResultStatus.UPDATED;
+                    response.Result = "LIST CURRENTLY SORTED BY EMAIL";
+                    break;
+                default:
+                    response.Status = ServiceResultStatus.FAILED;
+                    response.Result = "INVALID INPUT";
+                    break;
+            }
+            _fileHandler.SaveToFileAfterChanges(_filePath, _persons);
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("PersonService - SortPersonsByInput" + ex.Message);
+            response.Status = ServiceResultStatus.FAILED;
+            response.Result = ex.Message;
+        }
+        return response;
     }
 }

@@ -44,7 +44,7 @@ public class FileHandler : IFileHandler
         return response;
     }
 
-    public IServiceResult SaveToFileAfterRemovedPerson(string filePath, List<IPerson> persons)
+    public IServiceResult SaveToFileAfterChanges(string filePath, List<IPerson> persons)
     {
         IServiceResult response = new ServiceResult();
         try
@@ -52,7 +52,7 @@ public class FileHandler : IFileHandler
             string json = JsonConvert.SerializeObject(persons, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
             using var sw = new StreamWriter(filePath);
             sw.WriteLine(json);
-            response.Status = Enums.ServiceResultStatus.SUCCESS;
+            response.Status = Enums.ServiceResultStatus.UPDATED;
         }
         catch (Exception ex)
         {

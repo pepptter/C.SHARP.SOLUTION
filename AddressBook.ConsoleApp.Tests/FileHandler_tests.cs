@@ -48,7 +48,7 @@ public class FileHandler_tests
 
     }
     [Fact]
-    public void SaveToFileAfterRemovedPerson_SuccessfullySavesToFile_ReturnStatusMessageSuccess()
+    public void SaveToFileAfterChangesToList_SuccessfullySavesToFile_ReturnStatusMessageUpdated()
     {
         // Arrange
         var testFilePath = @"c:\plugg\textfiles\Test.json";
@@ -60,13 +60,13 @@ public class FileHandler_tests
         };
 
         var mockFileHandler = new Mock<IFileHandler>();
-        mockFileHandler.Setup(x => x.SaveToFileAfterRemovedPerson(It.IsAny<string>(), It.IsAny<List<IPerson>>())).Returns(new ServiceResult { Status = ServiceResultStatus.SUCCESS });
+        mockFileHandler.Setup(x => x.SaveToFileAfterChanges(It.IsAny<string>(), It.IsAny<List<IPerson>>())).Returns(new ServiceResult { Status = ServiceResultStatus.UPDATED });
 
         // Act
-        var result = mockFileHandler.Object.SaveToFileAfterRemovedPerson(testFilePath, persons);
+        var result = mockFileHandler.Object.SaveToFileAfterChanges(testFilePath, persons);
 
         // Assert
-        Assert.Equal(ServiceResultStatus.SUCCESS, result.Status);
+        Assert.Equal(ServiceResultStatus.UPDATED, result.Status);
         File.Delete(testFilePath);
     }
 }

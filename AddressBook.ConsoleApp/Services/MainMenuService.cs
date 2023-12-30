@@ -64,6 +64,7 @@ internal class MainMenuService
 
     /// <summary>
     /// The main menu's option to add a person to the list.
+    /// Asks the user to enter the person's first name, last name, email, phone number, and address.
     /// </summary>
     private static void HandleAddPersonMenu()
     {
@@ -85,7 +86,7 @@ internal class MainMenuService
         switch(result.Status)
         {
             case ServiceResultStatus.SUCCESS:
-                Console.WriteLine("CONTACT SUCCESFULLY ADDED");
+                Console.WriteLine("CONTACT SUCCESSFULLY ADDED");
                 break;
             case ServiceResultStatus.ALREADY_EXISTS:
                 Console.WriteLine("Duplicate email found: " + person.Email);
@@ -101,6 +102,10 @@ internal class MainMenuService
 
     /// <summary>
     /// The main menu's option to remove a person from the list.
+    /// Asks the user if they know the email of the person they want to remove.
+    /// If they do, they can enter the email and the person will be removed.
+    /// If they dont, they can choose to show the full address book and find the email there.
+    /// After finding out they can return to this menu to enter the email.
     /// </summary>
     private static void HandleRemovePersonMenu()
     {
@@ -141,6 +146,10 @@ internal class MainMenuService
 
     /// <summary>
     /// The main menu's option to show full information of a person by entering the person's email.
+    /// Asks the user if they know the email of the person they want to show.
+    /// If so, they can enter the email and the person's full information will be shown.
+    /// If not, they can choose to show the full address book and find the email there.
+    /// After finding out they can return to this menu to enter the email.
     /// </summary>
     private static void ShowContactByEmail()
     {
@@ -183,15 +192,48 @@ internal class MainMenuService
     }
     /// <summary>
     /// The main menu's option to show the full address book.
+    /// Allows the user to sort the list by first name, last name, or email.
+    /// Also optionally allows the user to return to the previous menu if entered from another menu.
     /// </summary>
     private static void ShowFullAddressBook(string returnMethod, Action returnOption)
     {
-
         RepeatsService.OptionTitle("SHOW FULL ADDRESSBOOK");
+        Console.WriteLine("HOW DO YOU WANT TO SORT THE LIST?");
+        Console.WriteLine("1. BY FIRST NAME");
+        Console.WriteLine("2. BY LAST NAME");
+        Console.WriteLine("3. BY EMAIL");
+        Console.Write("ENTER YOUR CHOICE (1-3): ");
+        int menuInput;
+
+        while (true)
+        {
+            var parsed = int.TryParse(Console.ReadLine(), out menuInput);
+            if (parsed && menuInput >= 1 && menuInput <= 3)
+            {
+                break;
+            }
+
+            Console.WriteLine("INVALID CHOICE, PLEASE ENTER A NUMBER FROM 1 TO 3");
+        }
+
+
+        Console.Clear();
+        RepeatsService.OptionTitle("SHOW FULL ADDRESSBOOK");
+
+        var sortResult = _personService.SortPersonsByInput(menuInput);
+        if (sortResult.Status != ServiceResultStatus.UPDATED)
+        {
+            Console.WriteLine("SORTING FAILED. CHECK ERROR.");
+        }
+        else
+        {
+            Console.WriteLine(sortResult.Result);
+        }
+
         var persons = _personService.GetPersonsFromList();
         foreach (var person in persons)
         {
-            Console.WriteLine($"Name: {person.FirstName} {person.LastName} <{person.Email}>" );          
+            Console.WriteLine($"Name: {person.FirstName} {person.LastName} <{person.Email}>");
         }
         Console.WriteLine();
         if (!string.IsNullOrEmpty(returnMethod))
@@ -203,13 +245,14 @@ internal class MainMenuService
                 returnOption();
             }
         }
-        Console.WriteLine("PRESS ANY KEY TO RETURN TO MAIN MENU");
+        Console.WriteLine("PRESS ANY KEY TO RETURN TO THE MAIN MENU");
         Console.ReadKey();
         ShowMainMenu();
     }
 
     /// <summary>
     /// The main menu's exit option. Asks the user to confirm exiting the application.
+    /// If yes, the application exits. If no, the main menu is shown again.
     /// </summary>
     private static void ShowExitConfirmationOption() 
     {

@@ -3,7 +3,7 @@
 namespace Shared.Interfaces;
 
 /// <summary>
-/// Services for handling file operations, such as reading and saving content.
+/// Services for handling file operations, such as reading, updating and saving content.
 /// </summary>
 public interface IFileHandler
 {
@@ -24,11 +24,11 @@ public interface IFileHandler
     IServiceResult SaveContentToFile(string filePath, string content);
 
     /// <summary>
-    /// Saves the file after a person has been removed from the list.
+    /// Saves the file after changes have been made to the list of persons.
     /// </summary>
     /// <param name="filePath">The file path with extension (e.g., c:\filefolder\file.json).</param>
     /// <param name="persons">The list of persons to be turned into a json-object and saved.</param>
-    /// <returns>A service result indicating success or failure.</returns>
-    IServiceResult SaveToFileAfterRemovedPerson(string filePath, List<IPerson> persons);
+    /// <returns>A service result indicating updated or failure.</returns>
+    IServiceResult SaveToFileAfterChanges(string filePath, List<IPerson> persons);
 
 }
